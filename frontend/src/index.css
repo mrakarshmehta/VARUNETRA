@@ -306,6 +306,23 @@ h1, h2, h3, h4, h5, h6 {
   border-color: var(--color-rain-border);
   color: var(--color-rain-text);
 }
+.civic-pill-connecting {
+  background: rgba(2, 132, 199, 0.12);
+  border-color: rgba(2, 132, 199, 0.35);
+  color: #0284c7;
+}
+.civic-pill-offline {
+  background: rgba(100, 116, 139, 0.16);
+  border-color: rgba(100, 116, 139, 0.32);
+  color: #475569;
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spinSlow 2.5s linear infinite;
+}
 
 /* ==========================================================================
    Tabular KPI Telemetry (.tabular-kpi)

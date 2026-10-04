@@ -32,6 +32,15 @@ export const SituationBoardModal: React.FC<SituationBoardModalProps> = ({
   situation,
   timeline,
 }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !situation) return null;
 
   const getRiskColor = (risk: string) => {
@@ -102,7 +111,17 @@ export const SituationBoardModal: React.FC<SituationBoardModalProps> = ({
               {situation.scenario_name} • Stage {situation.stage} ({situation.operational_phase})
             </p>
           </div>
-          <CivicButton variant="ghost" size="sm" onClick={onClose} icon={<X size={16} />} />
+          <CivicButton
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            icon={<X size={16} />}
+            data-testid="close-situation-board"
+            title="Close Situation Board"
+            aria-label="Close Situation Board"
+          >
+            Close
+          </CivicButton>
         </div>
 
         {/* Content Body */}
@@ -389,6 +408,15 @@ export const ScenarioOutcomeModal: React.FC<ScenarioOutcomeModalProps> = ({
   summary,
   onReset,
 }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !summary) return null;
 
   return (

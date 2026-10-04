@@ -23,6 +23,7 @@ import { CivicButton } from "../primitives/CivicButton";
 import { StatusPill } from "../primitives/StatusPill";
 import { TabularKpi } from "../primitives/TabularKpi";
 import { SegmentedControl } from "../primitives/SegmentedControl";
+import { OperatorEmptyState, OperatorLoadingState } from "../primitives";
 
 interface RoutingModuleProps {
   onRouteCalculated: (route: RouteResponse) => void;
@@ -381,7 +382,14 @@ export const RoutingModule: React.FC<RoutingModuleProps> = ({
             gap: "12px",
           }}
         >
-          {routeResult ? (
+          {loading ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "280px" }}>
+              <OperatorLoadingState
+                message="Calculating Hydro-Weighted Safe Route…"
+                subMessage="Evaluating 0–3h nowcasted flood depths, conduit surcharges & clearance thresholds"
+              />
+            </div>
+          ) : routeResult ? (
             <>
               {/* Route Summary Metrics */}
               <div
@@ -534,24 +542,13 @@ export const RoutingModule: React.FC<RoutingModuleProps> = ({
               </CivicButton>
             </>
           ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "280px",
-                color: "var(--text-muted)",
-                gap: "10px",
-              }}
-            >
-              <Navigation size={36} color="var(--border-strong)" />
-              <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-                No Route Calculated Yet
-              </div>
-              <div style={{ fontSize: "0.74rem", textAlign: "center", maxWidth: "280px", color: "var(--text-muted)" }}>
-                Select origin, destination and profile, then click "Compute Dynamic Flood Route".
-              </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "280px" }}>
+              <OperatorEmptyState
+                title="NO EMERGENCY ROUTE ACTIVE"
+                description="Select origin, destination and vehicle clearance profile, then click Compute Dynamic Flood Route."
+                actionText="Compute Route"
+                onAction={handleComputeRoute}
+              />
             </div>
           )}
         </div>

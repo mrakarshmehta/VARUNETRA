@@ -24,6 +24,7 @@ interface ScenarioBarProps {
   onOpenSummary?: () => void;
   isPresentationMode?: boolean;
   onTogglePresentationMode?: () => void;
+  isSubmitting?: boolean;
 }
 
 export const ScenarioBar: React.FC<ScenarioBarProps> = ({
@@ -36,6 +37,7 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
   onOpenSummary,
   isPresentationMode = false,
   onTogglePresentationMode,
+  isSubmitting = false,
 }) => {
   if (!stage) return null;
 
@@ -71,6 +73,7 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
             variant="primary"
             size="sm"
             onClick={onStart}
+            disabled={isSubmitting}
             icon={<AlertTriangle size={13} strokeWidth={2.2} />}
             style={{
               background: "linear-gradient(135deg, #b91c1c, #991b1b)",
@@ -79,6 +82,7 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
               letterSpacing: "0.01em",
               boxShadow: "0 2px 8px rgba(185, 28, 28, 0.3)",
               padding: "0 12px",
+              opacity: isSubmitting ? 0.6 : 1,
             }}
             title="Start deterministic end-to-end emergency simulation"
           >
@@ -89,8 +93,9 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
             variant={stage.is_auto_running ? "danger" : "primary"}
             size="sm"
             onClick={onToggleAuto}
+            disabled={isSubmitting}
             icon={stage.is_auto_running ? <Pause size={12} strokeWidth={2} /> : <Play size={12} strokeWidth={2} />}
-            style={{ minWidth: "96px" }}
+            style={{ minWidth: "96px", opacity: isSubmitting ? 0.6 : 1 }}
           >
             {stage.is_auto_running ? "Pause Sim" : "Auto Run"}
           </CivicButton>
@@ -101,6 +106,7 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
           size="sm"
           onClick={onStep}
           icon={<SkipForward size={12} strokeWidth={2} />}
+          style={{ opacity: isSubmitting ? 0.6 : 1 }}
           title="Step forward to next phase"
         >
           Step
@@ -110,7 +116,9 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
           variant="secondary"
           size="sm"
           onClick={onReset}
+          disabled={isSubmitting}
           icon={<RotateCcw size={12} strokeWidth={2} />}
+          style={{ opacity: isSubmitting ? 0.6 : 1 }}
           title="Reset simulation to Baseline (SYSTEM NORMAL)"
         >
           Reset
@@ -123,6 +131,7 @@ export const ScenarioBar: React.FC<ScenarioBarProps> = ({
           <StatusPill type="DEMO" label="SIMULATION" size="sm" />
 
           <span
+            data-testid="scenario-stage-badge"
             style={{
               fontSize: "11px",
               fontFamily: "var(--font-mono)",

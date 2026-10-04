@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { UserRole, DataProvenance, NowcastTimeStep } from "../types";
 import { ProviderStatusModal } from "./ProviderStatusModal";
+import { SystemStatusPopover } from "./SystemStatusPopover";
 import { StatusPill, CivicButton } from "./primitives";
 import { VarunetraLogo } from "./VarunetraLogo";
 
@@ -19,6 +20,7 @@ interface NavbarProps {
   lastUpdated: string;
   currentStep?: NowcastTimeStep | null;
   alertsCount?: number;
+  wsStatus?: "CONNECTING" | "CONNECTED" | "DISCONNECTED" | "ERROR";
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -28,10 +30,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   lastUpdated,
   currentStep,
   alertsCount = 0,
+  wsStatus = "CONNECTED",
 }) => {
   const [timeStr, setTimeStr] = useState<string>("");
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [provenanceModalOpen, setProvenanceModalOpen] = useState(false);
+  const [statusPopoverOpen, setStatusPopoverOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -227,26 +231,38 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right: Operator Profile & Health */}
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-          {/* Health indicator */}
-          <div
+          {/* Interactive System Status Button */}
+          <button
+            onClick={() => setStatusPopoverOpen(true)}
+            className="civic-btn civic-btn-ghost civic-btn-sm"
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "4px",
+              gap: "5px",
               padding: "2px 8px",
+              height: "26px",
               borderRadius: "var(--r-sm)",
-              background: "var(--color-normal-fill)",
-              border: "1px solid var(--color-normal-border)",
-              color: "var(--color-normal-text)",
+              background: wsStatus === "CONNECTED" ? "var(--color-normal-fill)" : "var(--color-warning-fill)",
+              border: wsStatus === "CONNECTED" ? "1px solid var(--color-normal-border)" : "1px solid var(--color-warning-border)",
+              color: wsStatus === "CONNECTED" ? "var(--color-normal-text)" : "var(--color-warning-text)",
               fontSize: "11px",
               fontFamily: "var(--font-mono)",
               fontWeight: 600,
+              cursor: "pointer",
             }}
-            title="All 18 modules, Dijkstra router and surrogate models responding"
+            title="Click to view live system status matrix (API, DB, Terrain, Model, WebSocket)"
           >
             <Activity size={12} strokeWidth={1.75} />
-            <span>HEALTH 100%</span>
-          </div>
+            <span>SYS: {wsStatus === "CONNECTED" ? "OPERATIONAL" : "RECONNECTING"}</span>
+            <span style={{ fontSize: "10px", opacity: 0.7 }}>▾</span>
+          </button>
+
+          {/* Unmistakable Real vs Simulation Status Pill */}
+          <StatusPill
+            type={dataMode === "DEMO" ? "DEMO" : "REAL"}
+            label={dataMode === "DEMO" ? "SIMULATION" : "REAL"}
+            size="sm"
+          />
 
           {/* Operator Role Dropdown */}
           <div style={{ position: "relative" }}>
@@ -326,6 +342,26 @@ export const Navbar: React.FC<NavbarProps> = ({
       <ProviderStatusModal
         isOpen={provenanceModalOpen}
         onClose={() => setProvenanceModalOpen(false)}
+      />
+
+      {/* System Status Matrix Popover */}
+      <SystemStatusPopover
+        isOpen={statusPopoverOpen}
+        onClose={() => setStatusPopoverOpen(false)}
+        status={{
+          system: wsStatus === "CONNECTED" ? (rainfallRate > 70 ? "CRITICAL" : "OPERATIONAL") : "DEGRADED",
+          api: wsStatus === "ERROR" ? "OFFLINE" : "HEALTHY",
+          database: "HEALTHY",
+          terrain: "COPERNICUS GLO30",
+          model: "RECALIBRATION REQUIRED",
+          websocket: wsStatus === "CONNECTED" ? "CONNECTED" : wsStatus === "CONNECTING" ? "CONNECTING" : wsStatus === "DISCONNECTED" ? "RECONNECTING" : "OFFLINE",
+          dataMode,
+          lastUpdate: lastUpdated || timeStr,
+        }}
+        onOpenProvenance={() => {
+          setStatusPopoverOpen(false);
+          setProvenanceModalOpen(true);
+        }}
       />
     </>
   );

@@ -48,6 +48,8 @@ import {
 } from "./types";
 import { api, createTelemetryWebSocket } from "./api/client";
 import { SituationBoardModal, ScenarioOutcomeModal } from "./components/ScenarioModals";
+import { FeedbackToastMessage, ActionFeedbackToast } from "./components/primitives/FeedbackStates";
+import { ActionConfirmationModal } from "./components/ActionConfirmationModal";
 
 export type ViewMode = "2D" | "3D";
 
@@ -116,6 +118,46 @@ export const App: React.FC = () => {
   const [selectedSOS, setSelectedSOS] = useState<SOSIncident | null>(null);
   const [selectedPump, setSelectedPump] = useState<MunicipalPump | null>(null);
 
+  // System Telemetry & WebSocket Health
+  const [wsStatus, setWsStatus] = useState<"CONNECTING" | "CONNECTED" | "DISCONNECTED" | "ERROR">("CONNECTING");
+  const [lastTelemetryTimestamp, setLastTelemetryTimestamp] = useState<string>(() =>
+    new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })
+  );
+
+  // Operator Action Feedback & Double Action Protection
+  const [feedbackToasts, setFeedbackToasts] = useState<FeedbackToastMessage[]>([]);
+  const [isSubmittingScenarioAction, setIsSubmittingScenarioAction] = useState<boolean>(false);
+  const [confirmModalConfig, setConfirmModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    resource: string;
+    effect: string;
+    variant: "danger" | "warning" | "primary";
+    action: () => Promise<void> | void;
+  }>({
+    isOpen: false,
+    title: "",
+    resource: "",
+    effect: "",
+    variant: "warning",
+    action: () => {},
+  });
+
+  const showToast = (title: string, details: string, severity: "INFO" | "WARNING" | "ERROR" | "CRITICAL" = "INFO") => {
+    const id = "toast-" + Date.now() + "-" + Math.random().toString(36).substr(2, 4);
+    const newToast: FeedbackToastMessage = {
+      id,
+      title,
+      details,
+      severity,
+      timestamp: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }),
+    };
+    setFeedbackToasts((prev) => [...prev.slice(-3), newToast]);
+    setTimeout(() => {
+      setFeedbackToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 6000);
+  };
+
   // 1. Initial Data Fetch
   useEffect(() => {
     async function loadInitialData() {
@@ -180,50 +222,81 @@ export const App: React.FC = () => {
 
   // 3. Real-time WebSocket Telemetry & Scenario Event Stream
   useEffect(() => {
-    const ws = createTelemetryWebSocket((msg) => {
-      if (!msg || !msg.type) return;
-      const scenarioEvents = [
-        "SCENARIO_STARTED",
-        "STAGE_TICK",
-        "SCENARIO_RESET",
-        "RAINFALL_UPDATED",
-        "NOWCAST_UPDATED",
-        "HOTSPOT_DETECTED",
-        "ROAD_HAZARD_DETECTED",
-        "ROUTE_UPDATED",
-        "SOS_CREATED",
-        "RESCUE_DISPATCHED",
-        "PUMP_DISPATCHED",
-        "ALERT_ISSUED",
-        "RECOVERY_STARTED",
-        "SCENARIO_COMPLETED",
-      ];
-      if (scenarioEvents.includes(msg.type)) {
-        if (msg.stage) {
-          setScenarioStage(msg.stage);
-          if (msg.stage.stage >= 15) {
-            api.getScenarioSummary().then((sum) => {
-              setOutcomeSummaryData(sum);
-              setIsOutcomeOpen(true);
-            }).catch(() => {});
+    const ws = createTelemetryWebSocket(
+      (msg) => {
+        setLastTelemetryTimestamp(
+          new Date().toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          })
+        );
+        if (!msg || !msg.type) return;
+        const scenarioEvents = [
+          "INITIAL_TELEMETRY",
+          "SCENARIO_STARTED",
+          "STAGE_TICK",
+          "SCENARIO_RESET",
+          "RAINFALL_UPDATED",
+          "NOWCAST_UPDATED",
+          "HOTSPOT_DETECTED",
+          "ROAD_HAZARD_DETECTED",
+          "ROUTE_UPDATED",
+          "SOS_CREATED",
+          "RESCUE_DISPATCHED",
+          "PUMP_DISPATCHED",
+          "ALERT_ISSUED",
+          "RECOVERY_STARTED",
+          "SCENARIO_COMPLETED",
+        ];
+        if (scenarioEvents.includes(msg.type)) {
+          if (msg.stage) {
+            setScenarioStage(msg.stage);
+            if (msg.stage.stage >= 15 && msg.type === "SCENARIO_COMPLETED") {
+              api.getScenarioSummary().then((sum) => {
+                setOutcomeSummaryData(sum);
+                setIsOutcomeOpen(true);
+                showToast("SCENARIO COMPLETED", "All 15 operational response phases executed.", "INFO");
+              }).catch(() => {});
+            }
+          } else {
+            api.getScenarioStage().then((st) => setScenarioStage(st)).catch(() => {});
           }
-        } else {
-          api.getScenarioStage().then((st) => setScenarioStage(st)).catch(() => {});
+          // Refresh live operational entities
+          Promise.all([
+            api.getRoads(),
+            api.getSOS(),
+            api.getPumps(),
+            api.getAlerts(),
+          ]).then(([roadsRes, sosRes, pumpsRes, alertsRes]) => {
+            setRoads(roadsRes.roads || []);
+            setSOSList(sosRes);
+            setPumps(pumpsRes);
+            setAlerts(alertsRes);
+          }).catch(() => {});
         }
-        // Refresh live operational entities
-        Promise.all([
-          api.getRoads(),
-          api.getSOS(),
-          api.getPumps(),
-          api.getAlerts(),
-        ]).then(([roadsRes, sosRes, pumpsRes, alertsRes]) => {
-          setRoads(roadsRes.roads || []);
-          setSOSList(sosRes);
-          setPumps(pumpsRes);
-          setAlerts(alertsRes);
-        }).catch(() => {});
+      },
+      (status) => {
+        setWsStatus(status);
+        if (status === "CONNECTED") {
+          // Authoritative resync without clearing valuable user views
+          Promise.all([
+            api.getRoads(),
+            api.getSOS(),
+            api.getPumps(),
+            api.getAlerts(),
+            api.getScenarioStage(),
+          ]).then(([roadsRes, sosRes, pumpsRes, alertsRes, stageRes]) => {
+            setRoads(roadsRes.roads || []);
+            setSOSList(sosRes);
+            setPumps(pumpsRes);
+            setAlerts(alertsRes);
+            setScenarioStage(stageRes);
+          }).catch(() => {});
+        }
       }
-    });
+    );
 
     return () => {
       ws.close();
@@ -232,6 +305,8 @@ export const App: React.FC = () => {
 
   // 4. Scenario Start/Step/Reset/Auto & Modal handlers
   const handleStartScenario = async () => {
+    if (isSubmittingScenarioAction) return;
+    setIsSubmittingScenarioAction(true);
     try {
       setActiveModule("map");
       const st = await api.startScenario();
@@ -248,39 +323,50 @@ export const App: React.FC = () => {
       setSOSList(sosRes);
       setPumps(pumpsRes);
       setAlerts(alertRes);
+      showToast("SCENARIO STARTED", "Patna Basin Extreme Rainfall simulation initiated.", "INFO");
     } catch (err) {
       console.error("Start scenario failed:", err);
+      showToast("SCENARIO FAILED", "Backend could not start emergency scenario.", "ERROR");
+    } finally {
+      setIsSubmittingScenarioAction(false);
     }
   };
 
   const handleStepScenario = async () => {
+    if (isSubmittingScenarioAction) return;
+    setIsSubmittingScenarioAction(true);
     try {
       const st = await api.stepScenario();
       setScenarioStage(st);
+      setIsSubmittingScenarioAction(false);
       if (st.stage >= 15) {
         api.getScenarioSummary().then((sum) => {
           setOutcomeSummaryData(sum);
           setIsOutcomeOpen(true);
         }).catch(() => {});
       }
-      const [nowcastRes, roadsRes, sosRes, pumpsRes, alertRes] = await Promise.all([
-        api.getNowcast(true),
+      Promise.all([
+        api.getNowcast(false),
         api.getRoads(),
         api.getSOS(),
         api.getPumps(),
         api.getAlerts(),
-      ]);
-      setNowcastSeries(nowcastRes);
-      setRoads(roadsRes.roads || []);
-      setSOSList(sosRes);
-      setPumps(pumpsRes);
-      setAlerts(alertRes);
+      ]).then(([nowcastRes, roadsRes, sosRes, pumpsRes, alertRes]) => {
+        setNowcastSeries(nowcastRes);
+        setRoads(roadsRes.roads || []);
+        setSOSList(sosRes);
+        setPumps(pumpsRes);
+        setAlerts(alertRes);
+      }).catch(() => {});
     } catch (err) {
       console.error("Step scenario failed:", err);
+      setIsSubmittingScenarioAction(false);
     }
   };
 
-  const handleResetScenario = async () => {
+  const executeResetScenario = async () => {
+    if (isSubmittingScenarioAction) return;
+    setIsSubmittingScenarioAction(true);
     try {
       const st = await api.resetScenario();
       setScenarioStage(st);
@@ -298,17 +384,36 @@ export const App: React.FC = () => {
       setSOSList(sosRes);
       setPumps(pumpsRes);
       setAlerts(alertRes);
+      showToast("SCENARIO RESET", "Baseline state restored (Stage 1/15) - System Normal.", "INFO");
     } catch (err) {
       console.error("Reset scenario failed:", err);
+      showToast("RESET FAILED", "Simulation reset encountered a backend error.", "ERROR");
+    } finally {
+      setIsSubmittingScenarioAction(false);
     }
   };
 
+  const handleRequestResetScenario = () => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: "RESET DEMO SCENARIO",
+      resource: "Patna Urban Basin Emergency Simulation",
+      effect: "Restores baseline telemetry (Stage 1/15), clears active SOS beacons, resets pumps to standby, and clears emergency detours.",
+      variant: "warning",
+      action: executeResetScenario,
+    });
+  };
+
   const handleToggleScenarioAuto = async () => {
+    if (isSubmittingScenarioAction) return;
+    setIsSubmittingScenarioAction(true);
     try {
       const st = await api.toggleScenarioAuto();
       setScenarioStage(st);
     } catch (err) {
       console.error("Toggle scenario auto failed:", err);
+    } finally {
+      setIsSubmittingScenarioAction(false);
     }
   };
 
@@ -391,10 +496,46 @@ export const App: React.FC = () => {
         currentRole={currentRole}
         onRoleChange={handleRoleChange}
         dataMode={dataMode}
-        lastUpdated="Live Telemetry"
+        lastUpdated={lastTelemetryTimestamp}
         currentStep={currentStep}
         alertsCount={alerts.length}
+        wsStatus={wsStatus}
       />
+
+      {/* Disconnection / Reconnect Banner */}
+      {wsStatus !== "CONNECTED" && (
+        <div
+          style={{
+            margin: "4px 12px 0 12px",
+            padding: "6px 14px",
+            borderRadius: "var(--r-sm)",
+            background: "rgba(220, 38, 38, 0.12)",
+            border: "1px solid rgba(220, 38, 38, 0.35)",
+            color: "var(--color-critical-text)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "12px",
+            fontWeight: 600,
+            zIndex: 999,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#dc2626",
+              }}
+            />
+            <span>LIVE FEED DISCONNECTED — VARUNETRA is attempting to reconnect… Authoritative telemetry cached.</span>
+          </div>
+          <div style={{ fontSize: "11px", fontFamily: "var(--font-mono)", opacity: 0.85 }}>
+            LAST UPDATE: {lastTelemetryTimestamp}
+          </div>
+        </div>
+      )}
 
       {/* 2. MAIN APP WORKSPACE */}
       <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
@@ -583,13 +724,14 @@ export const App: React.FC = () => {
                   stage={scenarioStage}
                   onStart={handleStartScenario}
                   onStep={handleStepScenario}
-                  onReset={handleResetScenario}
+                  onReset={handleRequestResetScenario}
                   onToggleAuto={handleToggleScenarioAuto}
                   onSelectStage={(num) => console.log("Select stage", num)}
                   onOpenSituationBoard={handleOpenSituationBoard}
                   onOpenSummary={handleOpenSummary}
                   isPresentationMode={isPresentationMode}
                   onTogglePresentationMode={() => setIsPresentationMode(!isPresentationMode)}
+                  isSubmitting={isSubmittingScenarioAction}
                 />
               </div>
 
@@ -666,7 +808,10 @@ export const App: React.FC = () => {
 
               {activeModule === "routing" && (
                 <RoutingModule
-                  onRouteCalculated={(rt) => setActiveRoute(rt)}
+                  onRouteCalculated={(rt) => {
+                    setActiveRoute(rt);
+                    showToast("DYNAMIC ROUTE SOLVED", `Safe route generated: ${rt.distance_km} km • ETA: ${rt.eta_minutes} min`, "INFO");
+                  }}
                   onNavigateToMap={() => setActiveModule("map")}
                 />
               )}
@@ -674,10 +819,14 @@ export const App: React.FC = () => {
               {activeModule === "sos" && (
                 <CitizenSOSModule
                   sosList={sosList}
-                  onSOSCreated={(newSOS) => setSOSList((prev) => [newSOS, ...prev])}
+                  onSOSCreated={(newSOS) => {
+                    setSOSList((prev) => [newSOS, ...prev]);
+                    showToast("SOS BEACON BROADCAST", `Incident logged: ${newSOS.number_of_people} reported trapped.`, "INFO");
+                  }}
                   onUpdateStatus={(id, status) => {
                     api.updateSOS(id, status).then((updated) => {
                       setSOSList((prev) => prev.map((s) => (s.id === id ? updated : s)));
+                      showToast("SOS STATUS ADVANCED", `Incident ${id} updated to ${status}.`, "INFO");
                     });
                   }}
                 />
@@ -697,6 +846,7 @@ export const App: React.FC = () => {
                   pumps={pumps}
                   onPumpUpdated={(updated) => {
                     setPumps((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+                    showToast("PUMP FLEET UPDATED", `${updated.name} (${updated.id}) is now ${updated.status}.`, "INFO");
                   }}
                 />
               )}
@@ -756,13 +906,14 @@ export const App: React.FC = () => {
                   stage={scenarioStage}
                   onStart={handleStartScenario}
                   onStep={handleStepScenario}
-                  onReset={handleResetScenario}
+                  onReset={handleRequestResetScenario}
                   onToggleAuto={handleToggleScenarioAuto}
                   onSelectStage={(num) => console.log("Select stage", num)}
                   onOpenSituationBoard={handleOpenSituationBoard}
                   onOpenSummary={handleOpenSummary}
                   isPresentationMode={isPresentationMode}
                   onTogglePresentationMode={() => setIsPresentationMode(!isPresentationMode)}
+                  isSubmitting={isSubmittingScenarioAction}
                 />
               </div>
             </div>
@@ -783,13 +934,31 @@ export const App: React.FC = () => {
         isOpen={isOutcomeOpen}
         onClose={() => setIsOutcomeOpen(false)}
         summary={outcomeSummaryData}
-        onReset={handleResetScenario}
+        onReset={handleRequestResetScenario}
       />
 
       {/* Settings & System Provenance Modal (Accessible from Rail & Header) */}
       <ProviderStatusModal
         isOpen={settingsModalOpen}
         onClose={() => setSettingsModalOpen(false)}
+      />
+
+      {/* Action Confirmation Modal for Global Destructive Operations */}
+      <ActionConfirmationModal
+        isOpen={confirmModalConfig.isOpen}
+        onClose={() => setConfirmModalConfig((p) => ({ ...p, isOpen: false }))}
+        onConfirm={confirmModalConfig.action}
+        actionTitle={confirmModalConfig.title}
+        resourceName={confirmModalConfig.resource}
+        expectedEffect={confirmModalConfig.effect}
+        variant={confirmModalConfig.variant}
+        confirmButtonText="Execute Reset"
+      />
+
+      {/* Floating Action Feedback Toasts */}
+      <ActionFeedbackToast
+        toasts={feedbackToasts}
+        onDismiss={(id) => setFeedbackToasts((prev) => prev.filter((t) => t.id !== id))}
       />
     </div>
   );

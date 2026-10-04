@@ -9,6 +9,7 @@ import { api } from "../../api/client";
 import { CivicButton } from "../primitives/CivicButton";
 import { StatusPill } from "../primitives/StatusPill";
 import { SegmentedControl } from "../primitives/SegmentedControl";
+import { OperatorEmptyState } from "../primitives";
 
 interface CitizenSOSModuleProps {
   sosList: SOSIncident[];
@@ -354,8 +355,19 @@ export const CitizenSOSModule: React.FC<CitizenSOSModuleProps> = ({
             <tbody>
               {filteredIncidents.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center", padding: "24px", color: "var(--text-muted)" }}>
-                    No active SOS incidents matching current filter.
+                  <td colSpan={10} style={{ padding: "32px 16px" }}>
+                    <OperatorEmptyState
+                      title="NO ACTIVE SOS INCIDENTS"
+                      description="The emergency dispatch queue is currently clear for the selected operational filter."
+                      actionText={filterStatus !== "ALL" ? "Show All Incidents" : "+ Create SOS Beacon"}
+                      onAction={() => {
+                        if (filterStatus !== "ALL") {
+                          setFilterStatus("ALL");
+                        } else {
+                          setShowBeaconForm(true);
+                        }
+                      }}
+                    />
                   </td>
                 </tr>
               ) : (
