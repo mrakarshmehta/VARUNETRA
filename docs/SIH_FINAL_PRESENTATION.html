@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VARUNETRA — SIH26085 Final Technical Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090e17;
+      --card-bg: rgba(18, 26, 43, 0.75);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --accent: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 20% 20%, #0d1b2a 0%, #070c14 100%);
+      color: var(--text-main);
+      font-family: var(--font);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Deck Layout */
+    .deck-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 40px 70px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* Header & Badges */
+    .slide-header {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary-light);
+      background: rgba(2, 132, 199, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .slide-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Slide Content Bodies */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      gap: 28px;
+      min-height: 0;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      flex: 1;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span {
+      color: var(--primary-light);
+    }
+
+    p, li {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    li {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: var(--primary-light);
+      font-size: 18px;
+      line-height: 1;
+      top: 1px;
+    }
+
+    /* Flow Diagrams */
+    .flow-chain {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 16px 0;
+    }
+
+    .flow-step {
+      background: rgba(2, 132, 199, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: var(--font-mono);
+    }
+
+    .flow-arrow {
+      color: var(--primary-light);
+      font-weight: bold;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .metric-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--primary-light);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f1f5f9;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+
+    /* Bottom Controller */
+    .controls {
+      height: 54px;
+      background: rgba(10, 16, 26, 0.9);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary-light);
+    }
+
+    .badge-sim {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1 -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">SMART INDIA HACKATHON 2024–2026 • SIH26085</span>
+          <h1 class="slide-title">VARUNETRA (वरुणनेत्र)</h1>
+          <p class="slide-subtitle">Urban Flood Intelligence, Nowcasting & Emergency Response Platform</p>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-sim">PILOT DEMO BUILD</span>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Ministry of Earth Sciences (MoES)</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card" style="flex: 1.2;">
+          <h3 class="card-title"><span>01</span> Mission & Problem Context</h3>
+          <p style="margin-bottom: 16px;">
+            VARUNETRA is an end-to-end operational flood command platform designed specifically for municipal authorities, disaster managers, and first responders navigating complex, low-elevation urban river basins.
+          </p>
+          <ul>
+            <li><strong>Problem Statement ID:</strong> SIH26085 — Urban Flood Nowcasting System.</li>
+            <li><strong>Operational Pilot Area:</strong> Patna Urban Basin, Bihar (25.56°N–25.65°N, 85.08°E–85.22°E).</li>
+            <li><strong>Authoritative Physical Data:</strong> Copernicus GLO-30 DSM (30m elevation grid) with hydro-conditioned D8 sink breaching.</li>
+            <li><strong>Closed-Loop Command:</strong> Bridges rainfall nowcasting directly to flood-aware routing, pump fleets, and citizen rescue dispatch.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title"><span>02</span> Pilot Basin Matrix</h3>
+          <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="metric-box">
+              <div class="metric-value">30m</div>
+              <div class="metric-label">Copernicus DSM Resolution</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">0–3 h</div>
+              <div class="metric-label">Hydrodynamic Horizon</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">14</div>
+              <div class="metric-label">Hydraulic Trunk Conduits</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">15</div>
+              <div class="metric-label">Deterministic Response Stages</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">THE URBAN CRISIS</span>
+          <h1 class="slide-title">The Problem: Why Traditional Systems Fail</h1>
+          <p class="slide-subtitle">Rapid runoff, variable drainage conduits, and the disconnect between science and field operations</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title"><span>01</span> Rapid Runoff Transition</h3>
+          <p>
+            Dense urban basins have >70% impervious coverage. Infiltration is negligible, converting localized cloudbursts into street inundation within 15–25 minutes. Regional models are too coarse and slow.
+          </p>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title"><span>02</span> Spatial Drainage Head Loss</h3>
+          <p>
+            Conduits feature uneven gradients and river outfall backpressure. When receiving rivers like the Ganga rise, flap gates seal or reverse flow occurs, surcharging road manholes regardless of rainfall volume.
+          </p>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title"><span>03</span> The Static Map Fallacy</h3>
+          <p>
+            Static 1-in-100 year flood hazard maps cannot answer: <em>Which road is passable right now for an ambulance? Which sump needs a dewatering pump?</em> Operators need dynamic corridor intelligence.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">OPERATIONAL PARADIGM</span>
+          <h1 class="slide-title">Our Solution: The Closed Operational Loop</h1>
+          <p class="slide-subtitle">"From flood intelligence to coordinated response"</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title">The Complete Closed-Loop Causality Pipeline</h3>
+          <p style="margin-bottom: 12px;">VARUNETRA converts meteorological and hydraulic signals into physical decision actions without operator delay:</p>
+          <div class="flow-chain">
+            <span class="flow-step">1. RAIN</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">2. NOWCAST</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">3. FLOOD RISK</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">4. HOTSPOT</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">5. ROAD IMPACT</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">6. SAFE ROUTE</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">7. SOS</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">8. RESCUE</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">9. PUMP</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">10. ALERT</span> <span class="flow-arrow">→</span>
+            <span class="flow-step">11. RECOVERY</span>
+          </div>
+          <ul style="margin-top: 16px;">
+            <li><strong>Dynamic Impedance Routing:</strong> Automatically navigates ambulances and SDRF vehicles around roads exceeding 30cm/50cm clearance.</li>
+            <li><strong>Automated Triage:</strong> Ingests citizen SOS beacons with GPS coordinates, auto-assigns nearest available response units.</li>
+            <li><strong>Targeted Dewatering:</strong> Prioritizes municipal pump fleet deployment based on predicted sump surcharge volumes.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">ENGINEERING FOUNDATION</span>
+          <h1 class="slide-title">System Architecture</h1>
+          <p class="slide-subtitle">Multi-tier decoupled architecture: High-performance FastAPI backend + React/Cesium GIS cockpit</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title">Three-Tier Architecture Breakdown</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Technologies</th>
+                <th>Responsibilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Ingestion & Data Matrix</strong></td>
+                <td>Copernicus GLO-30 DSM, GeoTIFF, Rasterio, OSM Graph</td>
+                <td>DEM elevation ingestion, D8 hydrological sink breaching, road network topology.</td>
+              </tr>
+              <tr>
+                <td><strong>Hydrology & Decision Engine</strong></td>
+                <td>FastAPI, NumPy, SciPy, NetworkX, Scikit-Learn</td>
+                <td>Coupled 1D/2D nowcast, ML fast surrogate, depth-cost Dijkstra routing, RBAC, audit logging.</td>
+              </tr>
+              <tr>
+                <td><strong>Command & Visual Cockpit</strong></td>
+                <td>React 19, TypeScript, Cesium 3D, Leaflet, WebSockets</td>
+                <td>Real-time telemetry, 2D/3D dual-mode GIS, Situation Board, interactive emergency controls.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">SCIENTIFIC INTEGRITY</span>
+          <h1 class="slide-title">Scientific & Hydrologic Engine</h1>
+          <p class="slide-subtitle">Authoritative Copernicus GLO-30 DSM terrain coupled with dynamic drainage hydraulics</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title"><span>Physics</span> Hydrology & Surcharge</h3>
+          <ul>
+            <li><strong>Copernicus GLO-30 DSM:</strong> True 30m resolution elevation matrix for Patna AOI (51.8m to 43.1m elevation range).</li>
+            <li><strong>Hydro-Conditioning:</strong> D8 flow direction, slope calculation, and artificial depression breaching.</li>
+            <li><strong>Hydraulic Head Loss:</strong> Manning's pipe equation coupled with river outfall tailwater stage.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title"><span>Transparency</span> Scientific Honesty</h3>
+          <ul>
+            <li><strong>Clear Data Watermarking:</strong> Simulated storm cell forcing is watermarked <code>SIMULATED RAINFALL</code>.</li>
+            <li><strong>ML Recalibration Banner:</strong> Fast surrogate inference explicitly flagged: <code>RECALIBRATION REQUIRED FOR UNGAUGED BASINS</code>.</li>
+            <li><strong>Fail-Closed Gate:</strong> In <code>REAL</code> data mode, switching to synthetic fallback terrain is permanently rejected (HTTP 403).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">CORE DIFFERENTIATOR</span>
+          <h1 class="slide-title">What Is Novel: The Integrated Workflow</h1>
+          <p class="slide-subtitle">Unifying flood physics, network routing, and emergency operations in a single pane</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title">Integrated Workflow vs Siloed Solutions</h3>
+          <p style="margin-bottom: 16px;">
+            Existing solutions provide either pure hydrology (HEC-RAS, SWMM), commercial navigation (Google Maps), or manual incident logs (NDMA portals). VARUNETRA couples them into a singular operational flow:
+          </p>
+          <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="metric-box">
+              <div class="metric-value">100%</div>
+              <div class="metric-label">Causal Coupling</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">&lt; 150ms</div>
+              <div class="metric-label">Tactical Route Recalculation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">PROVEN DEMONSTRATION</span>
+          <h1 class="slide-title">End-to-End Operational Demo</h1>
+          <p class="slide-subtitle">15 deterministic stages executed live in under 7 minutes</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card" style="flex: 1.2;">
+          <h3 class="card-title">Live 15-Stage Scenario Timeline</h3>
+          <ul>
+            <li><strong>Stage 1–4:</strong> Baseline normal → Extreme cloudburst (32 to 78 mm/h) → Saidpur trunk reaches 84% capacity.</li>
+            <li><strong>Stage 5–7:</strong> Conduit surcharge → Ganga backpressure → Severe ponding (48.5 cm) at Rajendra Nagar.</li>
+            <li><strong>Stage 8–9:</strong> Road marked BLOCKED (122.9 cm) → Dynamic route generated diverting via Bailey Road.</li>
+            <li><strong>Stage 10–12:</strong> SOS beacon SOS-01 ingested → TEAM-01 dispatched → High-flow pump PUMP-01 (1800 m³/h) deployed.</li>
+            <li><strong>Stage 13–15:</strong> Floodwaters recede below 15 cm → Damage survey logged → Evacuees sheltered & debrief generated.</li>
+          </ul>
+        </div>
+        <div class="glass-card" style="display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);">
+          <div style="text-align: center;">
+            <span class="badge-sim" style="font-size: 14px; padding: 6px 12px;">SITUATION BOARD SCREENSHOT</span>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">Available in <code>docs/e2e-verification/03-situation-board.png</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">CIVIC IMPACT</span>
+          <h1 class="slide-title">Measurable Operational Impact</h1>
+          <p class="slide-subtitle">Saving lives, protecting infrastructure, and eliminating responder vehicle stranding</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Operational Metric</th>
+                <th>Standard Municipal Response</th>
+                <th>VARUNETRA Platform</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Lowland Ponding Detection</strong></td>
+                <td>2 to 4 hours (citizen distress calls)</td>
+                <td><strong>0 to 30 minutes prior</strong> (drainage nowcast)</td>
+              </tr>
+              <tr>
+                <td><strong>Emergency Route Safety</strong></td>
+                <td>Vehicles trapped in flooded underpasses</td>
+                <td><strong>Zero stranding</strong> (depth clearance rules)</td>
+              </tr>
+              <tr>
+                <td><strong>Citizen SOS Triage</strong></td>
+                <td>Fragmented paper and phone logs</td>
+                <td><strong>Automated geocoding & prioritization</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Pump Asset Utilization</strong></td>
+                <td>Ad-hoc placement based on calls</td>
+                <td><strong>Volume-weighted hydraulic placement</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">TECHNICAL HONESTY</span>
+          <h1 class="slide-title">Validation, Boundaries & Limitations</h1>
+          <p class="slide-subtitle">Clear demarcation between software verification, simulated inputs, and unverified field claims</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title" style="color: #22c55e;">VERIFIED</h3>
+          <ul>
+            <li>81 backend pytest tests passing</li>
+            <li>Zero UI overflow violations (1440/1920/1024)</li>
+            <li>Deterministic 15-stage browser replay</li>
+            <li>Copernicus GLO-30 DSM elevation loaded</li>
+            <li>ACID SQLite persistence & JWT security</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title" style="color: #f59e0b;">SIMULATED</h3>
+          <ul>
+            <li>Convective rainfall input (32–88 mm/h)</li>
+            <li>Citizen SOS distress beacon reports</li>
+            <li>Accelerated 15-stage demonstration clock</li>
+            <li>Field responder GPS movements</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <h3 class="card-title" style="color: #ef4444;">NOT CLAIMED</h3>
+          <ul>
+            <li>No real-world sensor gauge validation</li>
+            <li>No ML accuracy claims on ungauged basins</li>
+            <li>No certified civil drain design claims</li>
+            <li>No official government SSO integration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">DEPLOYMENT ROADMAP</span>
+          <h1 class="slide-title">Future Scaling & Production Deployment</h1>
+          <p class="slide-subtitle">Transitioning from pilot evaluation to nationwide municipal disaster centers</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="glass-card">
+          <h3 class="card-title">Production Scaling Architecture</h3>
+          <ul>
+            <li><strong>IMD AWS & Radar Integration:</strong> Ingest real-time Doppler Weather Radar (DWR) precipitation rasters.</li>
+            <li><strong>IoT Ultrasonic Sensors:</strong> Real-time water-level telemetry across city sump chambers and drain outfalls.</li>
+            <li><strong>Enterprise Backend Scaling:</strong> Transition to PostgreSQL + PostGIS with Redis event queue for 10+ concurrent cities.</li>
+            <li><strong>National CAP Alerts:</strong> Common Alerting Protocol integration with State Disaster Management Authorities (SDMA).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Controller -->
+  <div class="controls">
+    <div>
+      <span>VARUNETRA SIH26085</span> • <span id="slide-indicator">Slide 1 of 10</span>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button class="btn-nav" onclick="prevSlide()">◀ Previous</button>
+      <button class="btn-nav" onclick="nextSlide()">Next ▶</button>
+      <button class="btn-nav" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((slide, idx) => {
+        slide.classList.toggle('active', idx + 1 === currentSlide);
+      });
+
+      document.getElementById('slide-indicator').innerText = `Slide ${currentSlide} of ${totalSlides}`;
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+      if (e.key === 'f' || e.key === 'F') toggleFullScreen();
+    });
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  </script>
+</body>
+</html>
