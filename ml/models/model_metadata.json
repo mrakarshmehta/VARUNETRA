@@ -1,0 +1,142 @@
+{
+  "model_name": "VARUNETRA Coupled Hydro-Surrogate v1.2",
+  "model_version": "1.2.0-rf-histgbm",
+  "dataset_version": "SYNTH-PATNA-HYDRO-2026-v1",
+  "training_mode": "PHYSICAL-SIMULATION-DERIVED-SURROGATE",
+  "data_provenance": "SIMULATED",
+  "training_timestamp": "2026-09-30T16:45:34.704692+00:00",
+  "validation_method": "Chronological Event Split (Leave-One-Flood-Event-Out)",
+  "is_real_world_calibrated": false,
+  "calibration_notice": "Trained on physically consistent 1D-2D drainage hydrodynamic simulation runs. Ready to integrate certified MoES rain-gauge & telemetry loggers.",
+  "sample_count": 3787,
+  "feature_count": 14,
+  "features": [
+    "rainfall_intensity_current_mmh",
+    "rainfall_15m_mm",
+    "rainfall_30m_mm",
+    "rainfall_60m_mm",
+    "accumulated_3h_mm",
+    "elevation_m",
+    "slope_pct",
+    "imperviousness_pct",
+    "catchment_area_ha",
+    "drainage_capacity_m3s",
+    "drainage_blockage_pct",
+    "drainage_utilization_pct",
+    "outfall_river_stage_m",
+    "distance_to_outfall_m"
+  ],
+  "inference_latency_ms": 0.0156,
+  "metrics": {
+    "mae_cm": 6.8,
+    "rmse_cm": 11.91,
+    "r2_score": 0.9266,
+    "precision": 0.9615,
+    "recall": 0.9716,
+    "f1_score": 0.9665,
+    "roc_auc": 0.965,
+    "false_alarm_rate": 0.4333,
+    "iou_spatial": 0.9352
+  },
+  "global_feature_importance": [
+    {
+      "feature_name": "rainfall_30m_mm",
+      "display_name": "30-min Rainfall Depth",
+      "importance": 0.7337,
+      "category": "Meteorological",
+      "description": "Medium-interval storm accumulation"
+    },
+    {
+      "feature_name": "imperviousness_pct",
+      "display_name": "Urban Impervious Surface",
+      "importance": 0.0563,
+      "category": "Topological",
+      "description": "Fraction of paved/roofed surface inhibiting infiltration"
+    },
+    {
+      "feature_name": "rainfall_60m_mm",
+      "display_name": "1-Hour Rain Accumulation",
+      "importance": 0.0338,
+      "category": "Meteorological",
+      "description": "Continuous hourly rainfall burden"
+    },
+    {
+      "feature_name": "drainage_blockage_pct",
+      "display_name": "Silt/Debris Blockage",
+      "importance": 0.0321,
+      "category": "Drainage",
+      "description": "Effective cross-section restriction from debris"
+    },
+    {
+      "feature_name": "accumulated_3h_mm",
+      "display_name": "3-Hour Total Precipitation",
+      "importance": 0.0216,
+      "category": "Meteorological",
+      "description": "Sustained storm volume driving soil saturation"
+    },
+    {
+      "feature_name": "drainage_utilization_pct",
+      "display_name": "Hydraulic Load %",
+      "importance": 0.0205,
+      "category": "Drainage",
+      "description": "Ratio of instantaneous flow to conduit capacity"
+    },
+    {
+      "feature_name": "drainage_capacity_m3s",
+      "display_name": "Storm Conduit Capacity",
+      "importance": 0.0201,
+      "category": "Drainage",
+      "description": "Full-flow hydraulic capacity under Manning condition"
+    },
+    {
+      "feature_name": "catchment_area_ha",
+      "display_name": "Subcatchment Drainage Area",
+      "importance": 0.0144,
+      "category": "Hydrological",
+      "description": "Tributary basin area draining into junction"
+    },
+    {
+      "feature_name": "rainfall_15m_mm",
+      "display_name": "15-min Rainfall Depth",
+      "importance": 0.0143,
+      "category": "Meteorological",
+      "description": "Short-burst precipitation depth"
+    },
+    {
+      "feature_name": "elevation_m",
+      "display_name": "Ground Elevation (DEM)",
+      "importance": 0.0135,
+      "category": "Terrain",
+      "description": "Surface elevation above MSL from urban DEM"
+    },
+    {
+      "feature_name": "rainfall_intensity_current_mmh",
+      "display_name": "Current Rain Rate",
+      "importance": 0.0126,
+      "category": "Meteorological",
+      "description": "Instantaneous rainfall rate in mm/hr"
+    },
+    {
+      "feature_name": "distance_to_outfall_m",
+      "display_name": "Conveyance Distance",
+      "importance": 0.0109,
+      "category": "Topological",
+      "description": "Hydraulic travel distance to final disposal point"
+    },
+    {
+      "feature_name": "slope_pct",
+      "display_name": "Topographic Slope",
+      "importance": 0.0097,
+      "category": "Terrain",
+      "description": "Ground incline driving gravity runoff velocity"
+    },
+    {
+      "feature_name": "outfall_river_stage_m",
+      "display_name": "Receiving River Stage",
+      "importance": 0.0064,
+      "category": "Hydrological",
+      "description": "Water level at Ganga outfall dictating backwater head"
+    }
+  ],
+  "base_expected_depth_cm": 74.36
+}

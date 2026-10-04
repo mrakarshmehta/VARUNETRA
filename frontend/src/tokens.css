@@ -1,0 +1,251 @@
+/* ==========================================================================
+   VARUNETRA: Liquid Glass Design Tokens
+   Centralized token registry conforming to the Liquid Glass Specification
+   ========================================================================== */
+
+:root {
+  /* Environment (Pearl, Cool, Water Multi-Stop Wash) */
+  --bg-pearl: #F4F3EF;
+  --bg-cool: #EEF2F6;
+  --bg-water: #E4EDF3;
+  --bg-environment: radial-gradient(circle at 50% 0%, var(--bg-cool) 0%, var(--bg-pearl) 55%, var(--bg-water) 100%);
+  --bg-environment-solid: #F0F3F5;
+
+  /* Ink Scale (Contrast Verified: Primary >= 7:1, Secondary >= 4.5:1 on light) */
+  --ink-900: #0F172A; /* Primary headers, values, active states */
+  --ink-700: #334155; /* Secondary labels, descriptive copy */
+  --ink-600: #475569; /* Tertiary labels, metadata (never lighter than 475569) */
+
+  /* Glass Materials - Fill & Blur specification */
+  --glass-ultra-fill: rgba(255, 255, 255, 0.38);
+  --glass-ultra-blur: 10px;
+
+  --glass-soft-fill: rgba(255, 255, 255, 0.52);
+  --glass-soft-blur: 14px;
+
+  --glass-panel-fill: rgba(255, 255, 255, 0.64);
+  --glass-panel-blur: 18px;
+
+  --glass-strong-fill: rgba(255, 255, 255, 0.78);
+  --glass-strong-blur: 24px;
+
+  --glass-dark-fill: rgba(15, 23, 42, 0.68);
+  --glass-dark-blur: 18px;
+
+  /* Edges & Highlights */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.55);
+  --glass-hairline: 1px solid rgba(15, 23, 42, 0.08);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.70);
+  --glass-specular: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 40%);
+
+  /* Dark Glass Edges */
+  --glass-dark-border: 1px solid rgba(255, 255, 255, 0.15);
+  --glass-dark-hairline: 1px solid rgba(255, 255, 255, 0.08);
+  --glass-dark-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.20);
+
+  /* Radius Scale */
+  --r-sm: 8px;   /* Controls, buttons, pills, chips */
+  --r-md: 14px;  /* Cards, rows, inputs, table panels */
+  --r-lg: 22px;  /* Floating panels, intel panel, rail */
+  --r-xl: 28px;  /* Modals, large dialogs */
+
+  /* Strict Spacing Grid */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Atmospheric Shadows (Slate-tinted, never harsh pitch black) */
+  --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-2: 0 8px 24px rgba(15, 23, 42, 0.10);
+  --shadow-3: 0 16px 48px rgba(15, 23, 42, 0.14);
+  --shadow-dark: 0 12px 32px rgba(0, 0, 0, 0.35);
+
+  /* Semantic Colors (14% translucent fill, 28% border, dark high-contrast text) */
+  --color-rain-base: #2F6FB5;
+  --color-rain-fill: rgba(47, 111, 181, 0.14);
+  --color-rain-border: rgba(47, 111, 181, 0.28);
+  --color-rain-text: #1d4e89;
+
+  --color-normal-base: #2E8B6A;
+  --color-normal-fill: rgba(46, 139, 106, 0.14);
+  --color-normal-border: rgba(46, 139, 106, 0.28);
+  --color-normal-text: #1b6348;
+
+  --color-warning-base: #B7791F;
+  --color-warning-fill: rgba(183, 121, 31, 0.14);
+  --color-warning-border: rgba(183, 121, 31, 0.28);
+  --color-warning-text: #7c4f0f;
+
+  --color-high-base: #C2410C;
+  --color-high-fill: rgba(194, 65, 12, 0.14);
+  --color-high-border: rgba(194, 65, 12, 0.28);
+  --color-high-text: #9a3412;
+
+  --color-critical-base: #C0392B;
+  --color-critical-fill: rgba(192, 57, 43, 0.14);
+  --color-critical-border: rgba(192, 57, 43, 0.28);
+  --color-critical-text: #8e2317;
+
+  --color-blocked-base: #64748B;
+  --color-blocked-fill: rgba(100, 116, 139, 0.14);
+  --color-blocked-border: rgba(100, 116, 139, 0.28);
+  --color-blocked-text: #334155;
+
+  /* Data Provenance Colors */
+  --color-real-base: #0284c7;
+  --color-real-fill: rgba(2, 132, 199, 0.14);
+  --color-real-border: rgba(2, 132, 199, 0.28);
+  --color-real-text: #0369a1;
+
+  --color-sim-base: #7c3aed;
+  --color-sim-fill: rgba(124, 58, 237, 0.14);
+  --color-sim-border: rgba(124, 58, 237, 0.28);
+  --color-sim-text: #6d28d9;
+
+  --color-demo-base: #b45309;
+  --color-demo-fill: rgba(180, 83, 9, 0.14);
+  --color-demo-border: rgba(180, 83, 9, 0.28);
+  --color-demo-text: #78350f;
+
+  /* Motion Curves */
+  --motion-duration-fast: 160ms;
+  --motion-duration-panel: 200ms;
+  --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Typography */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ==========================================================================
+   Liquid Glass Surface Utility Classes
+   ========================================================================== */
+
+/* Primary Floating Glass Panel (Header, Nav Rail, Intel Panel, Timeline) */
+.civic-glass {
+  background: var(--glass-panel-fill);
+  backdrop-filter: blur(var(--glass-panel-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-panel-blur)) saturate(140%);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-2), var(--glass-highlight);
+  background-image: var(--glass-specular);
+  background-repeat: no-repeat;
+  color: var(--ink-900);
+}
+
+/* Secondary Overlays, Legends, Sub-panels */
+.civic-glass-soft {
+  background: var(--glass-soft-fill);
+  backdrop-filter: blur(var(--glass-soft-blur));
+  -webkit-backdrop-filter: blur(var(--glass-soft-blur));
+  border: var(--glass-border);
+  box-shadow: var(--shadow-1), var(--glass-highlight);
+  color: var(--ink-900);
+}
+
+/* Map chips, compact tool clusters */
+.civic-glass-ultra {
+  background: var(--glass-ultra-fill);
+  backdrop-filter: blur(var(--glass-ultra-blur));
+  -webkit-backdrop-filter: blur(var(--glass-ultra-blur));
+  border: var(--glass-border);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-900);
+}
+
+/* Modals, Drawers, Floating Dropdowns */
+.civic-glass-strong {
+  background: var(--glass-strong-fill);
+  backdrop-filter: blur(var(--glass-strong-blur));
+  -webkit-backdrop-filter: blur(var(--glass-strong-blur));
+  border: var(--glass-border);
+  box-shadow: var(--shadow-3), var(--glass-highlight);
+  background-image: var(--glass-specular);
+  background-repeat: no-repeat;
+  color: var(--ink-900);
+}
+
+/* Controls over 3D Cesium View and Dark Tooltips */
+.civic-glass-dark {
+  background: var(--glass-dark-fill);
+  backdrop-filter: blur(var(--glass-dark-blur));
+  -webkit-backdrop-filter: blur(var(--glass-dark-blur));
+  border: var(--glass-dark-border);
+  box-shadow: var(--shadow-dark), var(--glass-dark-highlight);
+  color: #F8FAFC;
+}
+
+/* Hairline row divider for internally nested panels */
+.glass-hairline-bottom {
+  border-bottom: var(--glass-hairline);
+}
+.glass-hairline-top {
+  border-top: var(--glass-hairline);
+}
+.glass-hairline-right {
+  border-right: var(--glass-hairline);
+}
+
+/* ==========================================================================
+   Accessibility & Hardware Fallbacks
+   ========================================================================== */
+
+/* 1. Backdrop Filter Unsupported Fallback */
+@supports not (backdrop-filter: blur(1px)) {
+  .civic-glass,
+  .civic-glass-soft,
+  .civic-glass-ultra,
+  .civic-glass-strong {
+    background-color: rgba(248, 250, 252, 0.94) !important;
+  }
+  .civic-glass-dark {
+    background-color: rgba(15, 23, 42, 0.94) !important;
+  }
+}
+
+/* 2. Prefers Reduced Transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .civic-glass,
+  .civic-glass-soft,
+  .civic-glass-ultra,
+  .civic-glass-strong {
+    background-color: #F8FAFC !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .civic-glass-dark {
+    background-color: #0F172A !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* 3. Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* 4. Windows High Contrast / Forced Colors */
+@media (forced-colors: active) {
+  .civic-glass,
+  .civic-glass-soft,
+  .civic-glass-ultra,
+  .civic-glass-strong,
+  .civic-glass-dark {
+    border: 2px solid CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 3px solid Highlight !important;
+  }
+}

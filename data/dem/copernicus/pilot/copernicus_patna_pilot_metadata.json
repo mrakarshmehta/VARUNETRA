@@ -1,0 +1,67 @@
+{
+  "provider_key": "COPERNICUS_GLO30",
+  "source_name": "ESA Copernicus GLO-30 DSM (30m)",
+  "source_type": "COPERNICUS_GLO30",
+  "dataset_classification": "DSM (Digital Surface Model)",
+  "tile_name": "Copernicus_DSM_COG_10_N25_00_E085_00_DEM.tif",
+  "crs": "EPSG:4326 (WGS 84)",
+  "vertical_datum": "EGM2008 geoid",
+  "horizontal_resolution_m": 30.0,
+  "vertical_accuracy_m": 4.0,
+  "vertical_accuracy_description": "Absolute vertical accuracy < 4m (90% linear error worldwide). Classified truthfully as DSM.",
+  "licensing": "Copernicus Open Access / Public Domain for Research & Emergency Response",
+  "pilot_aoi": {
+    "min_lat": 25.57,
+    "max_lat": 25.64,
+    "min_lon": 85.08,
+    "max_lon": 85.22,
+    "name": "Patna Urban Basin",
+    "state": "Bihar",
+    "country": "India"
+  },
+  "buffered_aoi": {
+    "min_lat": 25.56,
+    "max_lat": 25.650000000000002,
+    "min_lon": 85.07,
+    "max_lon": 85.23
+  },
+  "actual_bounds": {
+    "min_lat": 25.559722,
+    "max_lat": 25.650278,
+    "min_lon": 85.069722,
+    "max_lon": 85.230278,
+    "rows": 326,
+    "cols": 578,
+    "pixel_size_deg": 0.00027778,
+    "resolution_m": 30.0
+  },
+  "aoi_coverage_pct": 100.0,
+  "nodata_value": -9999.0,
+  "nodata_cells_cleaned": 0,
+  "stats": {
+    "min_elevation_m": 40.0,
+    "max_elevation_m": 72.99,
+    "mean_elevation_m": 51.32,
+    "p25": 49.11,
+    "p50": 51.26,
+    "p75": 54.57,
+    "std": 4.89
+  },
+  "hydro_conditioning": {
+    "applied": true,
+    "culvert_breaches_count": 5,
+    "burn_depth_m": 0.35
+  },
+  "ml_recalibration": {
+    "status": "MODEL REQUIRES RECALIBRATION / RETRAINING",
+    "distribution_shift_detected": true,
+    "synthetic_mean_elevation_m": 50.2,
+    "real_mean_elevation_m": 51.32,
+    "notes": "The ML surrogate model was originally trained on the synthetic pilot elevation surface. Because the real Copernicus DSM introduces localized canopy/rooftop features and altered basin gradients, the ML inference engine marks the model as 'REQUIRES RECALIBRATION' until retrained against calibrated SWMM simulations."
+  },
+  "scalability_architecture": {
+    "current_pilot": "Patna Urban Basin",
+    "scalability_path": "Bihar Catchments -> Indian Cities",
+    "all_india_status": "Modular city/catchment configurable; India-wide raster NOT claimed."
+  }
+}

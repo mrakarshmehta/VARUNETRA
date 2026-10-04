@@ -1,0 +1,86 @@
+# ==============================================================================
+# VARUNETRA Production Orchestration Compose (Hardened Container Specification)
+# Problem Statement SIH26085: Urban Flood Nowcasting System
+# Ministry of Earth Sciences (MoES)
+# ==============================================================================
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: varunetra-backend
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WORKERS=1
+      - LOG_LEVEL=info
+      - DATA_MODE=${DATA_MODE:-DEMO}
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY:-}
+      - OPERATIONS_DB_PATH=/app/data/db/varunetra_operations.db
+      - COPERNICUS_PILOT_DIR=/app/data/dem/copernicus/pilot
+      - COPERNICUS_RAW_DIR=/app/data/dem/copernicus/raw
+    volumes:
+      # Mount real Copernicus GLO-30 DSM dataset directory from host (read-only)
+      - ./data/dem/copernicus:/app/data/dem/copernicus:ro
+      - ./ml/models:/app/ml/models:ro
+      # Persistent operational SQLite database volume (read-write)
+      - ./data/db:/app/data/db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    networks:
+      - varunetra-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: varunetra-frontend
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+      - SETUID
+      - SETGID
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/nginx-health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    networks:
+      - varunetra-net
+
+networks:
+  varunetra-net:
+    driver: bridge

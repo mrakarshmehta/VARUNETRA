@@ -1,0 +1,604 @@
+@import "leaflet/dist/leaflet.css";
+@import "./tokens.css";
+
+/* ==========================================================================
+   Base Layout & Document Setup
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-environment);
+  background-color: var(--bg-environment-solid);
+  color: var(--ink-900);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Typography Hierarchy (Strict Scale: 11 / 12 / 13 / 14 / 16 / 20 / 28)
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.text-micro { font-size: 11px; line-height: 1.35; }
+.text-xs { font-size: 12px; line-height: 1.4; }
+.text-sm { font-size: 13px; line-height: 1.45; }
+.text-base { font-size: 14px; line-height: 1.5; }
+.text-md { font-size: 16px; line-height: 1.4; }
+.text-lg { font-size: 20px; line-height: 1.3; }
+.text-xl { font-size: 28px; line-height: 1.2; letter-spacing: -0.02em; }
+
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Eyebrows */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-600);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.15);
+  border-radius: var(--r-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.30);
+}
+
+/* ==========================================================================
+   Civic Button Primitive (.civic-btn)
+   ========================================================================== */
+
+.civic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: all var(--motion-duration-fast) var(--motion-ease);
+  position: relative;
+  outline: none;
+}
+
+.civic-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.civic-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.civic-btn:focus-visible {
+  outline: 2px solid var(--ink-900);
+  outline-offset: 2px;
+}
+
+.civic-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Sizes */
+.civic-btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+  height: 26px;
+}
+.civic-btn-md {
+  padding: 6px 14px;
+  font-size: 13px;
+  height: 32px;
+}
+.civic-btn-lg {
+  padding: 8px 18px;
+  font-size: 14px;
+  height: 40px;
+}
+
+/* Variants */
+.civic-btn-primary {
+  background: var(--ink-900);
+  color: #FFFFFF;
+  border-color: var(--ink-900);
+  box-shadow: var(--shadow-1);
+}
+.civic-btn-primary:hover:not(:disabled) {
+  background: #1E293B;
+  box-shadow: var(--shadow-2);
+}
+
+.civic-btn-secondary {
+  background: rgba(255, 255, 255, 0.70);
+  color: var(--ink-900);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-1);
+}
+.civic-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.25);
+  box-shadow: var(--shadow-2);
+}
+
+.civic-btn-ghost {
+  background: transparent;
+  color: var(--ink-700);
+  border-color: transparent;
+}
+.civic-btn-ghost:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--ink-900);
+}
+
+.civic-btn-danger {
+  background: var(--color-critical-fill);
+  color: var(--color-critical-text);
+  border-color: var(--color-critical-border);
+}
+.civic-btn-danger:hover:not(:disabled) {
+  background: rgba(192, 57, 43, 0.22);
+  border-color: rgba(192, 57, 43, 0.45);
+}
+
+.civic-btn-success {
+  background: var(--color-normal-fill);
+  color: var(--color-normal-text);
+  border-color: var(--color-normal-border);
+}
+.civic-btn-success:hover:not(:disabled) {
+  background: rgba(46, 139, 106, 0.22);
+  border-color: rgba(46, 139, 106, 0.45);
+}
+
+.civic-btn-icon {
+  padding: 4px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  color: var(--ink-700);
+  border-radius: var(--r-sm);
+}
+.civic-btn-icon:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink-900);
+  border-color: rgba(15, 23, 42, 0.25);
+}
+
+.civic-btn-pill {
+  border-radius: 9999px;
+  padding: 4px 12px;
+}
+
+/* ==========================================================================
+   Status Pills (.civic-pill)
+   ========================================================================== */
+
+.civic-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.civic-pill-sm { padding: 1px 6px; font-size: 10px; }
+.civic-pill-md { padding: 2px 8px; font-size: 11px; }
+
+.civic-pill-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Provenance Tints */
+.civic-pill-real {
+  background: var(--color-real-fill);
+  border-color: var(--color-real-border);
+  color: var(--color-real-text);
+}
+.civic-pill-simulated {
+  background: var(--color-sim-fill);
+  border-color: var(--color-sim-border);
+  color: var(--color-sim-text);
+}
+.civic-pill-synthetic {
+  background: var(--color-sim-fill);
+  border-color: var(--color-sim-border);
+  color: var(--color-sim-text);
+}
+.civic-pill-demo {
+  background: var(--color-demo-fill);
+  border-color: var(--color-demo-border);
+  color: var(--color-demo-text);
+}
+.civic-pill-cached {
+  background: rgba(100, 116, 139, 0.14);
+  border-color: rgba(100, 116, 139, 0.28);
+  color: #334155;
+}
+
+/* Severity Tints */
+.civic-pill-normal {
+  background: var(--color-normal-fill);
+  border-color: var(--color-normal-border);
+  color: var(--color-normal-text);
+}
+.civic-pill-warning {
+  background: var(--color-warning-fill);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+.civic-pill-high {
+  background: var(--color-high-fill);
+  border-color: var(--color-high-border);
+  color: var(--color-high-text);
+}
+.civic-pill-critical {
+  background: var(--color-critical-fill);
+  border-color: var(--color-critical-border);
+  color: var(--color-critical-text);
+}
+.civic-pill-blocked {
+  background: var(--color-blocked-fill);
+  border-color: var(--color-blocked-border);
+  color: var(--color-blocked-text);
+}
+.civic-pill-active {
+  background: var(--color-rain-fill);
+  border-color: var(--color-rain-border);
+  color: var(--color-rain-text);
+}
+
+/* ==========================================================================
+   Tabular KPI Telemetry (.tabular-kpi)
+   ========================================================================== */
+
+.tabular-kpi {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+
+.tabular-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.tabular-kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabular-kpi-trend {
+  font-size: 12px;
+  font-weight: 700;
+}
+.trend-up { color: var(--color-high-text); }
+.trend-down { color: var(--color-normal-text); }
+.trend-steady { color: var(--ink-600); }
+
+.tabular-kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.tabular-kpi-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.tabular-kpi-unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-600);
+}
+
+.tabular-kpi-context {
+  font-size: 11px;
+  color: var(--ink-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* Tones */
+.tabular-kpi-rain .tabular-kpi-val { color: var(--color-rain-text); }
+.tabular-kpi-warning .tabular-kpi-val { color: var(--color-warning-text); }
+.tabular-kpi-high .tabular-kpi-val { color: var(--color-high-text); }
+.tabular-kpi-critical .tabular-kpi-val { color: var(--color-critical-text); }
+.tabular-kpi-normal .tabular-kpi-val { color: var(--color-normal-text); }
+
+/* ==========================================================================
+   Segmented Glass Control (.segmented-glass-control)
+   ========================================================================== */
+
+.segmented-glass-control {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.06);
+  padding: 2px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  gap: 2px;
+}
+
+.segmented-glass-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--r-sm) - 2px);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--motion-duration-fast) var(--motion-ease);
+}
+
+.segmented-glass-item:hover:not(.active) {
+  color: var(--ink-900);
+  background: rgba(255, 255, 255, 0.40);
+}
+
+.segmented-glass-item.active {
+  background: rgba(255, 255, 255, 0.90);
+  color: var(--ink-900);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.segmented-sm .segmented-glass-item {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+/* ==========================================================================
+   Civic Tooltip (.civic-tooltip)
+   ========================================================================== */
+
+.civic-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.civic-tooltip {
+  position: absolute;
+  z-index: 1000;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: var(--r-sm);
+  pointer-events: none;
+}
+
+.civic-tooltip-top {
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.civic-tooltip-bottom {
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ==========================================================================
+   Glass Data Grid (.glass-data-grid)
+   ========================================================================== */
+
+.glass-data-grid-container {
+  width: 100%;
+}
+
+.glass-data-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.glass-data-grid th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(244, 243, 239, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px var(--space-3);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-600);
+  border-bottom: var(--glass-hairline);
+  white-space: nowrap;
+}
+
+.glass-data-grid td {
+  padding: 8px var(--space-3);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+  color: var(--ink-900);
+}
+
+.glass-data-grid-row:hover td {
+  background: rgba(255, 255, 255, 0.60);
+}
+
+.glass-data-grid-row.row-selected td {
+  background: rgba(47, 111, 181, 0.10);
+}
+
+.row-interactive {
+  cursor: pointer;
+}
+
+.cell-tabular-numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.glass-data-grid-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--ink-600);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Glass Modal & Backdrop
+   ========================================================================== */
+
+.glass-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.glass-modal-card {
+  border-radius: var(--r-xl);
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.glass-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+}
+
+.glass-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.glass-modal-subtitle {
+  font-size: 12px;
+  color: var(--ink-600);
+  margin-top: 2px;
+}
+
+.glass-modal-body {
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Map Specific Styling (Leaflet & Cesium Clean Overrides)
+   ========================================================================== */
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-ui) !important;
+  background-color: var(--bg-cool);
+}
+
+.leaflet-control-scale-line {
+  border: 1px solid var(--ink-600) !important;
+  border-top: none !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  color: var(--ink-900) !important;
+  background: rgba(255, 255, 255, 0.75) !important;
+  padding: 0 4px !important;
+}
+
+/* Subtle non-looping pulse */
+@keyframes beacon-subtle {
+  0% { transform: scale(0.97); opacity: 0.85; }
+  50% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(0.97); opacity: 0.85; }
+}
+
+.pulse-beacon {
+  animation: beacon-subtle 2.5s infinite ease-in-out;
+}

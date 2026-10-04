@@ -1,0 +1,39 @@
+# Git & IDE
+.git
+.gitignore
+.agents
+.gemini
+.vscode
+.idea
+
+# Environment & Secrets (NEVER bundle secrets into images)
+.env
+.env.*
+!.env.example
+
+# Python Caches & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+env/
+venv/
+
+# Node & Frontend Build Artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+node_modules/
+npm-debug.log*
+
+# Documentation & Audit Artifacts
+docs/ui-audit/
+*.md
+!README.md
+
+# Large raw datasets (mounted separately via volumes)
+data/dem/copernicus/raw/*.tif
