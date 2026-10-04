@@ -31,10 +31,17 @@ for p in [PROJECT_ROOT, BACKEND_DIR]:
         sys.path.insert(0, p)
 
 from fastapi.testclient import TestClient
-from app.main import app
-from app.services.terrain_engine import urban_terrain_engine
-from app.adapters.terrain_providers import terrain_provider_registry, DEMStatus
-from app.services.nowcast_service import nowcast_engine
+
+try:
+    from app.main import app
+    from app.services.terrain_engine import urban_terrain_engine
+    from app.adapters.terrain_providers import terrain_provider_registry, DEMStatus
+    from app.services.nowcast_service import nowcast_engine
+except ImportError:
+    from backend.app.main import app
+    from backend.app.services.terrain_engine import urban_terrain_engine
+    from backend.app.adapters.terrain_providers import terrain_provider_registry, DEMStatus
+    from backend.app.services.nowcast_service import nowcast_engine
 
 client = TestClient(app)
 
