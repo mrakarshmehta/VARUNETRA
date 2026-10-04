@@ -51,10 +51,10 @@ async function recordScenario() {
   }
 
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1920, height: 1080 },
     recordVideo: {
       dir: VIDEO_DIR,
-      size: { width: 1440, height: 900 },
+      size: { width: 1920, height: 1080 },
     },
   });
 
