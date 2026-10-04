@@ -118,6 +118,7 @@ def test_terrain_inspector_hotspots():
     # 1. Inspect southern depression bowl (Saidpur Sump)
     insp_dep = urban_terrain_engine.inspect_point(25.602, 85.168)
     assert insp_dep.ground_elevation_m <= 53.5
+    assert insp_dep.surface_elevation_m is not None
     assert insp_dep.surface_elevation_m == insp_dep.ground_elevation_m
     assert insp_dep.dataset_classification == "DSM (Digital Surface Model)"
     assert "Copernicus" in insp_dep.elevation_provenance
@@ -132,6 +133,7 @@ def test_terrain_inspector_hotspots():
 
     # 2. Inspect northern Ganga natural levee (Ashok Rajpath / PMCH ridge)
     insp_ridge = urban_terrain_engine.inspect_point(25.620, 85.170)
+    assert insp_ridge.surface_elevation_m is not None
     assert insp_ridge.surface_elevation_m >= 54.0
     assert insp_ridge.dataset_classification == "DSM (Digital Surface Model)"
     assert insp_ridge.is_depression is False
