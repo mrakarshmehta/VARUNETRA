@@ -60,32 +60,25 @@ $$\mathbf{RAINFALL\ NOWCAST} \longrightarrow \mathbf{TERRAIN\ /\ DEM} \longright
 
 ---
 
-## 2. Visual Command Center & Operational Cockpit
+## 2. Proposed Solution & 2D Command Cockpit
 
 <div align="center">
 
-### 2D Operations Command Center (Patna Urban Basin Pilot)
-![VARUNETRA Command Center](docs/presentation/screenshots/01-command-center.png)
-*Real-time multi-tier command console featuring coupled hydrologic indicators, active drainage stress telemetry, street inundation contours, and incident dispatch queue.*
-
-### 3D Digital Twin City Model (CesiumJS)
-![VARUNETRA 3D City Twin](docs/presentation/screenshots/02-3d-city.png)
-*High-resolution 3D urban digital twin with volumetric building footprints and elevation-conditioned water surface planes.*
+![VARUNETRA Proposed Solution & Command Center](docs/presentation/slides_png/slide-2.png)
+*VARUNETRA 2D Operations Command Center: Patna Urban Basin pilot showing live rainfall gauges (48.5 mm/h), drainage trunk load (78%), peak depth (122.9 cm), and street-level inundation contours.*
 
 </div>
 
 ---
 
-## 3. Technical Approach & Architecture
+## 3. Technical Approach & Coupled Architecture
 
-### System Architecture Blueprint
-![VARUNETRA System Architecture](docs/architecture/system-architecture.png)
+<div align="center">
 
-### End-to-End Data Transformation Flow
-![VARUNETRA Data Flow](docs/architecture/data-flow.png)
+![VARUNETRA Technical Approach & Architecture](docs/presentation/slides_png/slide-3.png)
+*Technical Approach: Multi-source input pre-processing, coupled 1D/2D flood engine, hydraulic surcharge modeling, 0–180 minute nowcast horizon, and full-stack implementation architecture.*
 
-### Closed-Loop Operational Response Cycle
-![VARUNETRA Operational Response Loop](docs/architecture/operational-response-loop.png)
+</div>
 
 ### Methodology & Process for Implementation
 ```text
@@ -115,6 +108,13 @@ VARUNETRA computes hydrodynamic predictions across 15-minute intervals:
 
 ## 4. Technical Feasibility & Viability
 
+<div align="center">
+
+![VARUNETRA Feasibility & Viability](docs/presentation/slides_png/slide-4.png)
+*Feasibility & Viability: 6 technical pillars, key engineering challenges with data adapters, local calibration, physics+ML surrogates, and verified prototype benchmarks.*
+
+</div>
+
 ### Six Feasibility Pillars
 1. **Modular Data-Provider Architecture:** Decoupled telemetry adapters supporting pluggable live feeds and synthetic demonstration scenarios.
 2. **Coupled Surface + Drainage Modeling:** Hybrid Rational / modified SCS Curve Number runoff coupled with Manning's gravity conduit hydraulics.
@@ -135,6 +135,13 @@ VARUNETRA computes hydrodynamic predictions across 15-minute intervals:
 
 ## 5. Operational Impact & Benefits
 
+<div align="center">
+
+![VARUNETRA Operational Impact & Routing](docs/presentation/slides_png/slide-5.png)
+*Operational Response Loop: Closed feedback cycle (Predict -> Warn -> Map -> Route -> Respond -> Recover), multi-agency audience impact, and flood-aware routing console.*
+
+</div>
+
 ### Operational Response Lifecycle:
 $$\mathbf{PREDICT} \longrightarrow \mathbf{WARN} \longrightarrow \mathbf{MAP} \longrightarrow \mathbf{ROUTE} \longrightarrow \mathbf{RESPOND} \longrightarrow \mathbf{RECOVER}$$
 
@@ -149,6 +156,13 @@ $$\mathbf{PREDICT} \longrightarrow \mathbf{WARN} \longrightarrow \mathbf{MAP} \l
 ---
 
 ## 6. Research & Scientific References
+
+<div align="center">
+
+![VARUNETRA Research & References](docs/presentation/slides_png/slide-6.png)
+*Evidence-Based Evolution: Bridging the integration gap between disparate rainfall forecasts, state flood bulletins, and standalone hydraulic models.*
+
+</div>
 
 ### Before vs. After: Evidence-Based Evolution
 - **Before (Fragmented Ecosystem):**
