@@ -150,8 +150,8 @@ else:
 
 # 4. Attach release assets
 assets = [
-    ("VARUNETRA_SIH_Final_Presentation.pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
-    ("VARUNETRA_SIH_Final_Presentation.pdf", "application/pdf"),
+    ("docs/presentation/VARUNETRA_SIH_Final_Presentation.pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
+    ("docs/presentation/VARUNETRA_SIH_Final_Presentation.pdf", "application/pdf"),
     ("VARUNETRA_FINAL_SUBMISSION.zip", "application/zip")
 ]
 
@@ -160,9 +160,10 @@ req_assets = urllib.request.Request(f"https://api.github.com/repos/{repo}/releas
 with urllib.request.urlopen(req_assets) as resp:
     existing_assets = {a["name"]: a["id"] for a in json.loads(resp.read().decode())}
 
-for filename, content_type in assets:
-    if not os.path.exists(filename):
-        print(f"Warning: File {filename} not found, skipping asset upload.")
+for filepath, content_type in assets:
+    filename = os.path.basename(filepath)
+    if not os.path.exists(filepath):
+        print(f"Warning: File {filepath} not found, skipping asset upload.")
         continue
     
     if filename in existing_assets:
@@ -176,9 +177,9 @@ for filename, content_type in assets:
         urllib.request.urlopen(req_del)
         print(f"Deleted old asset: {filename}")
 
-    file_size = os.path.getsize(filename)
+    file_size = os.path.getsize(filepath)
     print(f"Uploading asset: {filename} ({file_size / 1024 / 1024:.2f} MB)...")
-    with open(filename, "rb") as f:
+    with open(filepath, "rb") as f:
         data = f.read()
 
     upload_headers = {
