@@ -24,10 +24,12 @@ title = "VARUNETRA v1.0.0 — SIH Demonstration Freeze"
 body = """# VARUNETRA (वरुणनेत्र) v1.0.0 — SIH Demonstration Freeze
 
 **Smart India Hackathon 2024–2026 • Problem Statement SIH26085**  
+**Problem Statement Title:** Urban Flood Nowcasting System (Drainage and Rainfall Coupling)  
+**Theme:** Disaster Management | **Category:** Software  
+**Team ID:** `166925` | **Team Name:** `Singularity@`  
 **Sponsoring Organization:** Ministry of Earth Sciences (MoES), Government of India  
 **Pilot Basin:** Patna Urban Basin, Bihar (25.56°N–25.65°N, 85.08°E–85.22°E)  
-**Release Tag:** `v1.0.0-demo-freeze`  
-**Git Commit:** `79454b1`
+**Release Tag:** `v1.0.0-demo-freeze`
 
 ---
 
@@ -41,15 +43,15 @@ body = """# VARUNETRA (वरुणनेत्र) v1.0.0 — SIH Demonstration
 
 ---
 
-## 2. Included Demonstration & Submission Assets
+## 2. Included Demonstration & Official Submission Assets
 
-This release freezes all final evaluation artifacts for the Smart India Hackathon jury:
+This release freezes all official evaluation artifacts for the Smart India Hackathon jury:
 
-1. **PowerPoint Presentation (`VARUNETRA_SIH_Final_Presentation.pptx`):**
-   - 10 editable 16:9 widescreen slides in civic command center aesthetic.
-   - Embedded high-resolution system architecture, data flow, operational loop, and Situation Board telemetry.
-2. **Official PDF Presentation (`VARUNETRA_SIH_Final_Presentation.pdf`):**
-   - Vector-accurate PDF export of the 10 slides for projector and printed jury review.
+1. **Official SIH Idea Presentation (`VARUNETRA_SIH_Final_Presentation.pptx`):**
+   - Official SIH Idea Submission Template (Team Singularity@, Team ID: 166925).
+   - Problem, Proposed Solution, Technical Approach (Rain + Terrain + Drainage Coupling), Feasibility & Viability, Impact & Benefits, Research & References.
+2. **Official SIH Idea PDF Export (`VARUNETRA_SIH_Final_Presentation.pdf`):**
+   - High-fidelity vector PDF export of the official 6-slide SIH template presentation.
 3. **High-Definition Demo Video (`VARUNETRA_SIH_Demo.mp4`):**
    - 1080p (1920×1080) 25fps H.264 video capturing the end-to-end 15-stage flood emergency lifecycle.
    - Persistent `SIMULATION` indicator visible throughout.

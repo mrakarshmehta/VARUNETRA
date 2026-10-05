@@ -1,8 +1,11 @@
 # VARUNETRA (वरुणनेत्र): Urban Flood Intelligence & Response Platform
 **Smart India Hackathon 2024–2026 | Problem Statement: SIH26085**  
+**Problem Statement Title:** Urban Flood Nowcasting System (Drainage and Rainfall Coupling)  
+**Theme:** Disaster Management | **Category:** Software  
+**Team ID:** `166925` | **Team Name:** `Singularity@`  
 **Sponsoring Organization:** Ministry of Earth Sciences (MoES), Government of India  
 **Pilot Basin:** Patna Urban Basin (Bihar, India) • 25.56°N–25.65°N, 85.08°E–85.22°E  
-**Release Tag:** `v1.0.0-demo-freeze` | **Commit:** `51ba476`
+**Release Tag:** `v1.0.0-demo-freeze`
 
 ---
 
