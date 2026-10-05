@@ -28,7 +28,7 @@
 
 > "Respected jury members, distinguished representatives of the Ministry of Earth Sciences and Smart India Hackathon:
 >
-> We present **VARUNETRA** — an Urban Flood Intelligence, Nowcasting, and Emergency Response Platform engineered to solve Problem Statement **SIH26085**.
+> We are **Team Singularity@** (Team ID: **166925**), presenting **VARUNETRA** (वरुणनेत्र) — an Urban Flood Intelligence, Nowcasting, and Emergency Response Platform engineered for Problem Statement **SIH26085**.
 >
 > While traditional hydrologic software produces static risk maps for civil engineers, VARUNETRA is built for the **municipal commissioner and disaster response commander** operating under active crisis.
 >

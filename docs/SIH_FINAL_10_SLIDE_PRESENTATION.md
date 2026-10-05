@@ -1,6 +1,9 @@
 # VARUNETRA (वरुणनेत्र)
 ## Urban Flood Intelligence, Nowcasting & Emergency Response Platform
 **Smart India Hackathon 2024–2026 | Problem Statement: SIH26085**  
+**Problem Statement Title:** Urban Flood Nowcasting System (Drainage and Rainfall Coupling)  
+**Theme:** Disaster Management • **PS Category:** Software  
+**Team ID:** `166925` • **Team Name:** `Singularity@`  
 **Ministry of Earth Sciences (MoES) | Pilot AOI: Patna Urban Basin (Bihar, India)**
 
 ---
@@ -12,7 +15,8 @@
 *Sub-Catchment Urban Basin Flood Analytics & Closed-Loop Disaster Operations*
 
 ### Core Metadata
-* **Problem Statement:** SIH26085 — Urban Flood Nowcasting System
+* **Problem Statement:** SIH26085 — Urban Flood Nowcasting System (Drainage and Rainfall Coupling)
+* **Team:** Singularity@ (Team ID: 166925)
 * **Primary Authority:** Ministry of Earth Sciences (MoES) / Municipal Disaster Operations
 * **Operational Pilot AOI:** Patna Urban Basin (25.56°N–25.65°N, 85.08°E–85.22°E)
 * **Core Technological Focus:** Real Copernicus GLO-30 DSM terrain coupling, 0–3 hour hydrodynamic nowcasting, flood-aware emergency vehicle routing, and coordinated multi-agency response dispatch.
